@@ -6,8 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { IdParamDto } from './dto/id-param.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -21,6 +24,7 @@ export class UsersController {
    * @returns The newly created user.
    */
   @Post('/create-user')
+  @UsePipes(new ValidationPipe())
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -36,32 +40,38 @@ export class UsersController {
 
   /**
    * Retrieve a specific user by ID.
-   * @param id - The ID of the user to retrieve.
+   * @param idParamDto - The DTO containing the ID of the user to retrieve.
    * @returns The user with the specified ID.
    */
   @Get('/:id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id); // The '+' converts the id string to a number
+  @UsePipes(new ValidationPipe())
+  findOne(@Param() idParamDto: IdParamDto) {
+    return this.usersService.findOne(idParamDto.id);
   }
 
   /**
    * Update a specific user by ID.
-   * @param id - The ID of the user to update.
+   * @param idParamDto - The DTO containing the ID of the user to update.
    * @param updateUserDto - The data transfer object containing updated user details.
    * @returns The updated user.
    */
   @Patch('/:id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto); // The '+' converts the id string to a number
+  @UsePipes(new ValidationPipe())
+  update(
+    @Param() idParamDto: IdParamDto,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(idParamDto.id, updateUserDto);
   }
 
   /**
    * Remove a specific user by ID.
-   * @param id - The ID of the user to remove.
+   * @param idParamDto - The DTO containing the ID of the user to remove.
    * @returns The removed user.
    */
   @Delete('/:id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id); // The '+' converts the id string to a number
+  @UsePipes(new ValidationPipe())
+  remove(@Param() idParamDto: IdParamDto) {
+    return this.usersService.remove(idParamDto.id);
   }
 }
