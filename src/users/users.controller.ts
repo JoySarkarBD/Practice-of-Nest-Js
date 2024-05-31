@@ -25,8 +25,8 @@ export class UsersController {
    */
   @Post('/create-user')
   @UsePipes(new ValidationPipe())
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.create(createUserDto);
   }
 
   /**
@@ -34,8 +34,8 @@ export class UsersController {
    * @returns A list of all users.
    */
   @Get('/get-all-users')
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return await this.usersService.findAll();
   }
 
   /**
@@ -45,8 +45,8 @@ export class UsersController {
    */
   @Get('/:id')
   @UsePipes(new ValidationPipe())
-  findOne(@Param() idParamDto: IdParamDto) {
-    return this.usersService.findOne(idParamDto.id);
+  async findOne(@Param() idParamDto: IdParamDto) {
+    return await this.usersService.findOne(idParamDto.id);
   }
 
   /**
@@ -57,11 +57,11 @@ export class UsersController {
    */
   @Patch('/:id')
   @UsePipes(new ValidationPipe())
-  update(
+  async update(
     @Param() idParamDto: IdParamDto,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(idParamDto.id, updateUserDto);
+    return await this.usersService.update(idParamDto.id, updateUserDto);
   }
 
   /**
@@ -71,7 +71,7 @@ export class UsersController {
    */
   @Delete('/:id')
   @UsePipes(new ValidationPipe())
-  remove(@Param() idParamDto: IdParamDto) {
-    return this.usersService.remove(idParamDto.id);
+  async remove(@Param() idParamDto: IdParamDto) {
+    return await this.usersService.remove(idParamDto.id);
   }
 }

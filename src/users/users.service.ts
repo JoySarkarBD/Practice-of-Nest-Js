@@ -13,21 +13,21 @@ export class UsersService {
    * @param createUserDto - The data transfer object containing user creation details.
    * @returns The newly created user.
    */
-  create(createUserDto: CreateUserDto): User {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser: User = {
       id: this.nextId++, // Assign a unique ID to the new user
       ...createUserDto, // Spread the properties from the DTO
     };
     this.users.push(newUser); // Add the new user to the array
-    return newUser; // Return the newly created user
+    return await Promise.resolve(newUser); // Return the newly created user
   }
 
   /**
    * Retrieve all users.
    * @returns An array of all users.
    */
-  findAll(): User[] {
-    return this.users; // Return the array of all users
+  async findAll(): Promise<User[]> {
+    return await Promise.resolve(this.users); // Return the array of all users
   }
 
   /**
@@ -36,12 +36,12 @@ export class UsersService {
    * @returns The user with the specified ID.
    * @throws NotFoundException if the user with the given ID is not found.
    */
-  findOne(id: number): User {
+  async findOne(id: number): Promise<User> {
     const user = this.users.find((user) => user.id === id); // Find the user by ID
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`); // Throw an exception if the user is not found
     }
-    return user; // Return the found user
+    return await Promise.resolve(user); // Return the found user
   }
 
   /**
@@ -51,14 +51,14 @@ export class UsersService {
    * @returns The updated user.
    * @throws NotFoundException if the user with the given ID is not found.
    */
-  update(id: number, updateUserDto: UpdateUserDto): User {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const userIndex = this.users.findIndex((user) => user.id === id); // Find the user index by ID
     if (userIndex === -1) {
       throw new NotFoundException(`User with ID ${id} not found`); // Throw an exception if the user is not found
     }
     const updatedUser = { ...this.users[userIndex], ...updateUserDto }; // Merge the existing user data with the updated data
     this.users[userIndex] = updatedUser; // Update the user in the array
-    return updatedUser; // Return the updated user
+    return await Promise.resolve(updatedUser); // Return the updated user
   }
 
   /**
@@ -67,12 +67,12 @@ export class UsersService {
    * @returns The removed user.
    * @throws NotFoundException if the user with the given ID is not found.
    */
-  remove(id: number): User {
+  async remove(id: number): Promise<User> {
     const userIndex = this.users.findIndex((user) => user.id === id); // Find the user index by ID
     if (userIndex === -1) {
       throw new NotFoundException(`User with ID ${id} not found`); // Throw an exception if the user is not found
     }
     const removedUser = this.users.splice(userIndex, 1); // Remove the user from the array
-    return removedUser[0]; // Return the removed user
+    return await Promise.resolve(removedUser[0]); // Return the removed user
   }
 }
