@@ -16,11 +16,13 @@ export class ProductionExceptionFilter implements ExceptionFilter {
     const status =
       process.env.NODE_ENV === 'production' ? 200 : exception.getStatus();
     const message = exception.message || 'Internal server error';
+    const method = request.method;
 
     // Customize the response message based on the environment
     response.status(status).json({
       statusCode: status,
       message,
+      method,
       timestamp: new Date().toISOString(),
       path: request.url,
     });
