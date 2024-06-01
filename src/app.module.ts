@@ -1,6 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CorsMiddleware } from './middleware/cors.middleware';
+import { HelmetMiddleware } from './middleware/helmet.middleware';
 import { MorganMiddleware } from './middleware/morgan.middleware';
 import { UsersModule } from './users/users.module';
 
@@ -11,8 +13,13 @@ import { UsersModule } from './users/users.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // Apply Morgan middleware to log HTTP requests
-    consumer.apply(MorganMiddleware).forRoutes('*'); // Apply Morgan middleware to all routes
+    // Apply Morgan middleware to log HTTP requests.
+    // Apply Helmet middleware to enhance security by setting security-related HTTP response headers. The 'csp' middleware sets the Content-Security-Policy header to prevent XSS attacks, while 'hidePoweredBy' removes the X-Powered-By header.
+    // Apply CORS middleware to enable Cross-Origin Resource Sharing (CORS), allowing resources to be requested from another domain.
+
+    consumer
+      .apply(MorganMiddleware, CorsMiddleware, HelmetMiddleware)
+      .forRoutes('*'); // Apply Morgan middleware to all routes
   }
 }
 
