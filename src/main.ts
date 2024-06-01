@@ -1,9 +1,11 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { configDotenv } from 'dotenv';
 import { AppModule } from './app.module';
 import { ValidationExceptionFilter } from './validation-exception/validation-exception.filter';
 
 async function bootstrap() {
+  configDotenv(); // Load environment variables from .env file
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -13,6 +15,6 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new ValidationExceptionFilter());
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 8080);
 }
 bootstrap();
