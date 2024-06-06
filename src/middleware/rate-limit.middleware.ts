@@ -10,6 +10,13 @@ const limiter = rateLimit({
 
 @Injectable()
 export class RateLimitMiddleware implements NestMiddleware {
+  /**
+   * Middleware function to apply rate limiting to incoming requests.
+   * Rate limiting is only applied in production mode.
+   * @param req - The incoming HTTP request object.
+   * @param res - The HTTP response object.
+   * @param next - The next function to call in the middleware chain.
+   */
   use(req: Request, res: Response, next: NextFunction) {
     if (process.env.NODE_ENV === 'production') {
       // Apply the rate limit middleware instance
