@@ -7,8 +7,17 @@ import {
 } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 
+/**
+ * Exception filter to handle validation errors thrown by the application.
+ * This filter formats and sends a response containing the validation errors.
+ */
 @Catch(BadRequestException)
 export class ValidationExceptionFilter implements ExceptionFilter {
+  /**
+   * Method to catch and handle the validation exception.
+   * @param exception - The validation exception instance.
+   * @param host - The argument host containing the request and response objects.
+   */
   catch(exception: BadRequestException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -26,6 +35,11 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     });
   }
 
+  /**
+   * Method to format validation errors into a structured format.
+   * @param errors - The array of validation errors.
+   * @returns The formatted validation errors.
+   */
   private formatErrors(errors: ValidationError[]) {
     const result = {};
 
