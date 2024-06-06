@@ -8,8 +8,17 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+/**
+ * Interceptor to transform HTTP responses and handle errors.
+ */
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
+  /**
+   * Method to intercept HTTP requests and responses.
+   * @param context - The execution context.
+   * @param next - The call handler.
+   * @returns An observable of the transformed response.
+   */
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     // Extract the HTTP request object to get method and URL
     const request = context.switchToHttp().getRequest();
