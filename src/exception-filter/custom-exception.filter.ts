@@ -6,8 +6,17 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+/**
+ * Exception filter to handle HTTP exceptions in production mode.
+ * This filter customizes the response message based on the environment.
+ */
 @Catch(HttpException)
 export class ProductionExceptionFilter implements ExceptionFilter {
+  /**
+   * Method to catch and handle HTTP exceptions.
+   * @param exception - The HTTP exception instance.
+   * @param host - The argument host containing the request and response objects.
+   */
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
