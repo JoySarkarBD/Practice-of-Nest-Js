@@ -3,12 +3,12 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductionExceptionFilter } from './exception-filter/custom-exception.filter';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
-import { CookieParserMiddleware } from './middleware/cookie-parser.middleware';
-import { CorsMiddleware } from './middleware/cors.middleware';
-import { HelmetMiddleware } from './middleware/helmet.middleware';
-import { MorganMiddleware } from './middleware/morgan.middleware';
-import { RateLimitMiddleware } from './middleware/rate-limit.middleware';
+import { ResponseInterceptor } from './interceptor/response.interceptor';
+import { CookieParserMiddleware } from './middlewares/cookie-parser.middleware';
+import { CorsMiddleware } from './middlewares/cors.middleware';
+import { HelmetMiddleware } from './middlewares/helmet.middleware';
+import { MorganMiddleware } from './middlewares/morgan.middleware';
+import { RateLimitMiddleware } from './middlewares/rate-limit.middleware';
 import { UsersModule } from './users/users.module';
 
 @Module({
