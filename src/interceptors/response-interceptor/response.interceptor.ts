@@ -90,6 +90,16 @@ export class ResponseInterceptor implements NestInterceptor {
       res.message || (status ? 'Operation successful' : 'Operation failed');
     const data = res.data !== undefined ? res.data : res;
 
+    // If the response data is null or falsy, return an error response
+    if (data === null || !data) {
+      return {
+        status: status,
+        statusCode: statusCode,
+        path: request.url,
+        timestamp: new Date().toISOString(),
+        message: message,
+      };
+    }
     return {
       status: status,
       statusCode: statusCode,
