@@ -18,7 +18,6 @@ import { UsersModule } from './users/users.module';
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     UsersModule,
-    // DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
