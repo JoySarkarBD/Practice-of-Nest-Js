@@ -2,7 +2,7 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { configDotenv } from 'dotenv';
 import { AppModule } from './app.module';
-import { ResponseInterceptor } from './interceptors/response-interceptor/response.interceptor';
+import { ResponseInterceptor } from './core-modules/interceptors/response-interceptor/response.interceptor';
 
 async function bootstrap() {
   configDotenv(); // Load environment variables from .env file

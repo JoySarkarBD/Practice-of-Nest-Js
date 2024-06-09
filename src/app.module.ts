@@ -1,11 +1,11 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CookieParserMiddleware } from './middlewares/cookie-parser.middleware';
-import { CorsMiddleware } from './middlewares/cors.middleware';
-import { HelmetMiddleware } from './middlewares/helmet.middleware';
-import { MorganMiddleware } from './middlewares/morgan.middleware';
-import { RateLimitMiddleware } from './middlewares/rate-limit.middleware';
+import { CookieParserMiddleware } from './core-modules/middlewares/cookie-parser.middleware';
+import { CorsMiddleware } from './core-modules/middlewares/cors.middleware';
+import { HelmetMiddleware } from './core-modules/middlewares/helmet.middleware';
+import { MorganMiddleware } from './core-modules/middlewares/morgan.middleware';
+import { RateLimitMiddleware } from './core-modules/middlewares/rate-limit.middleware';
 import { UsersModule } from './users/users.module';
 
 @Module({
