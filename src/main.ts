@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { configDotenv } from 'dotenv';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './core-modules/interceptors/response-interceptor/response.interceptor';
+import { setupSwagger } from './core-modules/swagger/swagger.config';
 
 async function bootstrap() {
   configDotenv(); // Load environment variables from .env file
@@ -14,6 +15,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Setup Swagger
+  setupSwagger(app);
 
   app.useGlobalInterceptors(new ResponseInterceptor());
 
