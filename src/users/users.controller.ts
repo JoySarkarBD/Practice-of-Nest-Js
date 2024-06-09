@@ -9,11 +9,19 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IdParamDto } from './dto/id-param.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -25,6 +33,27 @@ export class UsersController {
    */
   @Post('/create-user')
   @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'The user has been successfully created.',
+    schema: {
+      example: {
+        status: true,
+        statusCode: 201,
+        path: '/users/create-user',
+        timestamp: new Date().toISOString(),
+        message: 'User created successfully',
+        result: {
+          id: 1,
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          password: 'hashedpassword',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
@@ -34,6 +63,34 @@ export class UsersController {
    * @returns A list of all users.
    */
   @Get('/get-all-users')
+  @ApiOperation({ summary: 'Retrieve all users' })
+  @ApiResponse({
+    status: 200,
+    description: 'A list of all users.',
+    schema: {
+      example: {
+        status: true,
+        statusCode: 200,
+        path: '/users/get-all-users',
+        timestamp: new Date().toISOString(),
+        message: 'Users retrieved successfully',
+        result: [
+          {
+            id: 1,
+            username: 'john_doe',
+            email: 'john.doe@example.com',
+            password: 'hashedpassword',
+          },
+          {
+            id: 2,
+            username: 'jane_doe',
+            email: 'jane.doe@example.com',
+            password: 'hashedpassword',
+          },
+        ],
+      },
+    },
+  })
   async findAll() {
     return await this.usersService.findAll();
   }
@@ -45,6 +102,44 @@ export class UsersController {
    */
   @Get('/:id')
   @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Retrieve a user by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the user to retrieve',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The user with the specified ID.',
+    schema: {
+      example: {
+        status: true,
+        statusCode: 200,
+        path: '/users/1',
+        timestamp: new Date().toISOString(),
+        message: 'User retrieved successfully',
+        result: {
+          id: 1,
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          password: 'hashedpassword',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found.',
+    schema: {
+      example: {
+        status: false,
+        statusCode: 404,
+        path: '/users/1',
+        timestamp: new Date().toISOString(),
+        message: 'User not found',
+      },
+    },
+  })
   async findOne(@Param() idParamDto: IdParamDto) {
     return await this.usersService.findOne(idParamDto.id);
   }
@@ -57,6 +152,54 @@ export class UsersController {
    */
   @Patch('/:id')
   @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Update a user by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the user to update',
+    type: Number,
+  })
+  @ApiBody({
+    description: 'The data transfer object containing updated user details',
+    schema: {
+      example: {
+        username: 'new_username',
+        email: 'new.email@example.com',
+        password: 'newpassword',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The updated user.',
+    schema: {
+      example: {
+        status: true,
+        statusCode: 200,
+        path: '/users/1',
+        timestamp: new Date().toISOString(),
+        message: 'User updated successfully',
+        result: {
+          id: 1,
+          username: 'new_username',
+          email: 'new.email@example.com',
+          password: 'newhashedpassword',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found.',
+    schema: {
+      example: {
+        status: false,
+        statusCode: 404,
+        path: '/users/1',
+        timestamp: new Date().toISOString(),
+        message: 'User not found',
+      },
+    },
+  })
   async update(
     @Param() idParamDto: IdParamDto,
     @Body() updateUserDto: UpdateUserDto,
@@ -71,6 +214,44 @@ export class UsersController {
    */
   @Delete('/:id')
   @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Remove a user by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the user to remove',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The removed user.',
+    schema: {
+      example: {
+        status: true,
+        statusCode: 200,
+        path: '/users/1',
+        timestamp: new Date().toISOString(),
+        message: 'User removed successfully',
+        result: {
+          id: 1,
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          password: 'hashedpassword',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found.',
+    schema: {
+      example: {
+        status: false,
+        statusCode: 404,
+        path: '/users/1',
+        timestamp: new Date().toISOString(),
+        message: 'User not found',
+      },
+    },
+  })
   async remove(@Param() idParamDto: IdParamDto) {
     return await this.usersService.remove(idParamDto.id);
   }
