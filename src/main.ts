@@ -2,7 +2,7 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { configDotenv } from 'dotenv';
 import { AppModule } from './app.module';
-import { ValidationExceptionFilter } from './validation-exception/validation-exception.filter';
+import { ResponseInterceptor } from './interceptors/response-interceptor/response.interceptor';
 
 async function bootstrap() {
   configDotenv(); // Load environment variables from .env file
@@ -14,7 +14,9 @@ async function bootstrap() {
       },
     }),
   );
-  app.useGlobalFilters(new ValidationExceptionFilter());
+
+  app.useGlobalInterceptors(new ResponseInterceptor());
+
   await app.listen(process.env.PORT || 8080);
 }
 bootstrap();
