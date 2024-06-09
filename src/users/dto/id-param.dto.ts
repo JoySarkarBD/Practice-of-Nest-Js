@@ -1,9 +1,8 @@
 import { Transform } from 'class-transformer';
-import { IsInt, IsPositive } from 'class-validator';
+import { IsMongoId } from 'class-validator';
 
 export class IdParamDto {
-  @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
-  @IsInt()
-  @IsPositive()
-  readonly id: number;
+  @Transform(({ value }) => value.toString(), { toClassOnly: true })
+  @IsMongoId()
+  readonly id: string;
 }

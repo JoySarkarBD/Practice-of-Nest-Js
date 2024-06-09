@@ -1,4 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CookieParserMiddleware } from './core-modules/middlewares/cookie-parser.middleware';
@@ -9,7 +11,15 @@ import { RateLimitMiddleware } from './core-modules/middlewares/rate-limit.middl
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
+    UsersModule,
+    // DatabaseModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

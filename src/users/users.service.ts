@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
-  private nextId = 1;
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   /**
    * Create a new user.
@@ -16,16 +17,14 @@ export class UsersService {
   async create(
     createUserDto: CreateUserDto,
   ): Promise<{ status: boolean; message: string; data: User }> {
-    const newUser: User = {
-      id: this.nextId++, // Assign a unique ID to the new user
-      ...createUserDto, // Spread the properties from the DTO
-    };
-    this.users.push(newUser); // Add the new user to the array
+    const createdUser = new this.userModel(createUserDto);
+    const savedUser = await createdUser.save();
+
     return {
       status: true,
       message: 'User created successfully',
-      data: newUser,
-    }; // Return response with status, message, and new user
+      data: savedUser,
+    };
   }
 
   /**
@@ -33,10 +32,10 @@ export class UsersService {
    * @returns An object containing status, message, and an array of all users.
    */
   async findAll(): Promise<{ status: boolean; message: string; data: User[] }> {
-    const data = this.users; // Get all users
+    const data = await this.userModel.find().exec();
     const message =
-      data.length > 0 ? 'Users retrieved successfully' : 'No users found'; // Set appropriate message
-    return { status: true, message, data }; // Return response with status, message, and users
+      data.length > 0 ? 'Users retrieved successfully' : 'No users found';
+    return { status: true, message, data };
   }
 
   /**
@@ -45,17 +44,17 @@ export class UsersService {
    * @returns An object containing status, message, and the user with the specified ID or an error message if not found.
    */
   async findOne(
-    id: number,
+    id: string,
   ): Promise<{ status: boolean; message: string; data: User | null }> {
-    const user = this.users.find((user) => user.id === id); // Find the user by ID
+    const user = await this.userModel.findById(id).exec();
     if (!user) {
       return {
         status: false,
         message: `User with ID ${id} not found`,
         data: null,
-      }; // Return response if the user is not found
+      };
     }
-    return { status: true, message: 'User retrieved successfully', data: user }; // Return response with status, message, and found user
+    return { status: true, message: 'User retrieved successfully', data: user };
   }
 
   /**
@@ -65,24 +64,24 @@ export class UsersService {
    * @returns An object containing status, message, and the updated user or an error message if not found.
    */
   async update(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<{ status: boolean; message: string; data: User | null }> {
-    const userIndex = this.users.findIndex((user) => user.id === id); // Find the user index by ID
-    if (userIndex === -1) {
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(id, updateUserDto, { new: true })
+      .exec();
+    if (!updatedUser) {
       return {
         status: false,
         message: `User with ID ${id} not found`,
         data: null,
-      }; // Return response if the user is not found
+      };
     }
-    const updatedUser = { ...this.users[userIndex], ...updateUserDto }; // Merge the existing user data with the updated data
-    this.users[userIndex] = updatedUser; // Update the user in the array
     return {
       status: true,
       message: 'User updated successfully',
       data: updatedUser,
-    }; // Return response with status, message, and updated user
+    };
   }
 
   /**
@@ -91,21 +90,36 @@ export class UsersService {
    * @returns An object containing status, message, and the removed user or an error message if not found.
    */
   async remove(
-    id: number,
+    id: string,
   ): Promise<{ status: boolean; message: string; data: User | null }> {
-    const userIndex = this.users.findIndex((user) => user.id === id); // Find the user index by ID
-    if (userIndex === -1) {
+    const removedUser = await this.userModel.findByIdAndDelete(id).exec();
+    if (!removedUser) {
       return {
         status: false,
         message: `User with ID ${id} not found`,
         data: null,
-      }; // Return response if the user is not found
+      };
     }
-    const removedUser = this.users.splice(userIndex, 1); // Remove the user from the array
     return {
       status: true,
       message: 'User removed successfully',
-      data: removedUser[0],
-    }; // Return response with status, message, and removed user
+      data: removedUser,
+    };
+  }
+
+  /**
+   * Remove multiple users by IDs.
+   * @param ids - An array of user IDs to remove.
+   * @returns An object containing status and a message.
+   */
+  async removeMultiple(
+    ids: string[],
+  ): Promise<{ status: boolean; message: string; count: number }> {
+    const result = await this.userModel.deleteMany({ _id: { $in: ids } });
+    return {
+      status: true,
+      message: `${result.deletedCount} users removed successfully`,
+      count: result.deletedCount,
+    };
   }
 }

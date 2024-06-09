@@ -36,7 +36,7 @@ export class ResponseInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-
+    const method = request.method;
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -67,6 +67,7 @@ export class ResponseInterceptor implements NestInterceptor {
       status: false,
       statusCode: status,
       path: request.url,
+      method,
       timestamp: new Date().toISOString(),
       message: formattedErrors,
     });
@@ -82,7 +83,7 @@ export class ResponseInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-
+    const method = request.method;
     const statusCode = response.statusCode;
 
     const status = res.status !== undefined ? res.status : true;
@@ -96,6 +97,7 @@ export class ResponseInterceptor implements NestInterceptor {
         status: status,
         statusCode: statusCode,
         path: request.url,
+        method,
         timestamp: new Date().toISOString(),
         message: message,
       };
@@ -104,6 +106,7 @@ export class ResponseInterceptor implements NestInterceptor {
       status: status,
       statusCode: statusCode,
       path: request.url,
+      method,
       timestamp: new Date().toISOString(),
       message: message,
       result: data,

@@ -17,6 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DeleteMultipleUsersDto } from './dto/delete-multiple-user.dto';
 import { IdParamDto } from './dto/id-param.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -106,7 +107,7 @@ export class UsersController {
   @ApiParam({
     name: 'id',
     description: 'The ID of the user to retrieve',
-    type: Number,
+    type: String,
   })
   @ApiResponse({
     status: 200,
@@ -156,7 +157,7 @@ export class UsersController {
   @ApiParam({
     name: 'id',
     description: 'The ID of the user to update',
-    type: Number,
+    type: String,
   })
   @ApiBody({
     description: 'The data transfer object containing updated user details',
@@ -208,6 +209,37 @@ export class UsersController {
   }
 
   /**
+   * Remove multiple users by IDs.
+   * @param deleteMultipleUsersDto - The DTO containing an array of user IDs to remove.
+   * @returns An object containing status, message, and the number of removed users.
+   */
+  @Delete('/delete-multiple')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Remove multiple users by IDs' })
+  @ApiBody({
+    description: 'The DTO containing an array of user IDs to remove',
+    schema: {
+      example: {
+        ids: ['60b8d6c1d5d4c505f8b0b4d5', '60b8d6c1d5d4c505f8b0b4d6'],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The number of users removed successfully.',
+    schema: {
+      example: {
+        status: true,
+        message: '2 users removed successfully',
+        count: 2,
+      },
+    },
+  })
+  async removeMultiple(@Body() deleteMultipleUsersDto: DeleteMultipleUsersDto) {
+    return await this.usersService.removeMultiple(deleteMultipleUsersDto.ids);
+  }
+
+  /**
    * Remove a specific user by ID.
    * @param idParamDto - The DTO containing the ID of the user to remove.
    * @returns The removed user.
@@ -218,7 +250,7 @@ export class UsersController {
   @ApiParam({
     name: 'id',
     description: 'The ID of the user to remove',
-    type: Number,
+    type: String,
   })
   @ApiResponse({
     status: 200,
