@@ -35,10 +35,10 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 8080, () => {
     // Log the application URL and Swagger documentation URL
     console.log(
-      `Application is running at http://localhost:${process.env.PORT}`,
+      `Application is running at http://localhost:${process.env.PORT}/api/v1`,
     );
     console.log(
-      `Application's API documentation is available at http://localhost:${process.env.PORT}/api`,
+      `Application's API documentation is available at http://localhost:${process.env.PORT}/api/v1/api-docs`,
     );
   });
 }
