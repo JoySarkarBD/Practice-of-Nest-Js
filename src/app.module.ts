@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CookieParserMiddleware } from './core-modules/middlewares/cookie-parser.middleware';
@@ -8,6 +8,7 @@ import { CorsMiddleware } from './core-modules/middlewares/cors.middleware';
 import { HelmetMiddleware } from './core-modules/middlewares/helmet.middleware';
 import { MorganMiddleware } from './core-modules/middlewares/morgan.middleware';
 import { RateLimitMiddleware } from './core-modules/middlewares/rate-limit.middleware';
+import { typeOrmConfig } from './database/ormconfig';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -16,7 +17,7 @@ import { UsersModule } from './users/users.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    TypeOrmModule.forRoot(typeOrmConfig),
     UsersModule,
   ],
   controllers: [AppController],

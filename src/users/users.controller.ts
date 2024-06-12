@@ -46,7 +46,7 @@ export class UsersController {
         timestamp: new Date().toISOString(),
         message: 'User created successfully',
         result: {
-          id: 1,
+          id: '550e8400-e29b-41d4-a716-446655440000',
           username: 'john_doe',
           email: 'john.doe@example.com',
           password: 'hashedpassword',
@@ -77,13 +77,13 @@ export class UsersController {
         message: 'Users retrieved successfully',
         result: [
           {
-            id: 1,
+            id: '550e8400-e29b-41d4-a716-446655440000',
             username: 'john_doe',
             email: 'john.doe@example.com',
             password: 'hashedpassword',
           },
           {
-            id: 2,
+            id: '550e8400-e29b-41d4-a716-446655440001',
             username: 'jane_doe',
             email: 'jane.doe@example.com',
             password: 'hashedpassword',
@@ -116,11 +116,11 @@ export class UsersController {
       example: {
         status: true,
         statusCode: 200,
-        path: '/users/1',
+        path: '/users/550e8400-e29b-41d4-a716-446655440000',
         timestamp: new Date().toISOString(),
         message: 'User retrieved successfully',
         result: {
-          id: 1,
+          id: '550e8400-e29b-41d4-a716-446655440000',
           username: 'john_doe',
           email: 'john.doe@example.com',
           password: 'hashedpassword',
@@ -135,7 +135,7 @@ export class UsersController {
       example: {
         status: false,
         statusCode: 404,
-        path: '/users/1',
+        path: '/users/550e8400-e29b-41d4-a716-446655440000',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
@@ -176,11 +176,11 @@ export class UsersController {
       example: {
         status: true,
         statusCode: 200,
-        path: '/users/1',
+        path: '/users/550e8400-e29b-41d4-a716-446655440000',
         timestamp: new Date().toISOString(),
         message: 'User updated successfully',
         result: {
-          id: 1,
+          id: '550e8400-e29b-41d4-a716-446655440000',
           username: 'new_username',
           email: 'new.email@example.com',
           password: 'newhashedpassword',
@@ -195,7 +195,7 @@ export class UsersController {
       example: {
         status: false,
         statusCode: 404,
-        path: '/users/1',
+        path: '/users/550e8400-e29b-41d4-a716-446655440000',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
@@ -220,7 +220,10 @@ export class UsersController {
     description: 'The DTO containing an array of user IDs to remove',
     schema: {
       example: {
-        ids: ['60b8d6c1d5d4c505f8b0b4d5', '60b8d6c1d5d4c505f8b0b4d6'],
+        ids: [
+          '550e8400-e29b-41d4-a716-446655440000',
+          '550e8400-e29b-41d4-a716-446655440001',
+        ],
       },
     },
   })
@@ -259,11 +262,11 @@ export class UsersController {
       example: {
         status: true,
         statusCode: 200,
-        path: '/users/1',
+        path: '/users/550e8400-e29b-41d4-a716-446655440000',
         timestamp: new Date().toISOString(),
         message: 'User removed successfully',
         result: {
-          id: 1,
+          id: '550e8400-e29b-41d4-a716-446655440000',
           username: 'john_doe',
           email: 'john.doe@example.com',
           password: 'hashedpassword',
@@ -278,7 +281,7 @@ export class UsersController {
       example: {
         status: false,
         statusCode: 404,
-        path: '/users/1',
+        path: '/users/550e8400-e29b-41d4-a716-446655440000',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },

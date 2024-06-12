@@ -1,13 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayNotEmpty, IsArray, IsMongoId } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsString } from 'class-validator';
 
 export class DeleteMultipleUsersDto {
   @ApiProperty({
     description: 'An array of user IDs to delete',
-    example: ['60b8d6c1d5d4c505f8b0b4d5', '60b8d6c1d5d4c505f8b0b4d6'],
+    example: [
+      '550e8400-e29b-41d4-a716-446655440000',
+      '550e8400-e29b-41d4-a716-446655440001',
+    ],
   })
   @IsArray()
   @ArrayNotEmpty()
-  @IsMongoId({ each: true })
+  @IsString({ each: true })
   readonly ids: string[];
 }
