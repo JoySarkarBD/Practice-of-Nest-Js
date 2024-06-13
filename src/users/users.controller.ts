@@ -44,6 +44,7 @@ export class UsersController {
         statusCode: 201,
         path: '/users/create-user',
         timestamp: new Date().toISOString(),
+        method: 'POST',
         message: 'User created successfully',
         result: {
           id: '550e8400-e29b-41d4-a716-446655440000',
@@ -73,6 +74,7 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/get-all-users',
+        method: 'GET',
         timestamp: new Date().toISOString(),
         message: 'Users retrieved successfully',
         result: [
@@ -117,6 +119,7 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/550e8400-e29b-41d4-a716-446655440000',
+        method: 'GET',
         timestamp: new Date().toISOString(),
         message: 'User retrieved successfully',
         result: {
@@ -136,6 +139,7 @@ export class UsersController {
         status: false,
         statusCode: 404,
         path: '/users/550e8400-e29b-41d4-a716-446655440000',
+        method: 'GET',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
@@ -177,6 +181,7 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/550e8400-e29b-41d4-a716-446655440000',
+        method: 'PATCH',
         timestamp: new Date().toISOString(),
         message: 'User updated successfully',
         result: {
@@ -196,6 +201,7 @@ export class UsersController {
         status: false,
         statusCode: 404,
         path: '/users/550e8400-e29b-41d4-a716-446655440000',
+        method: 'PATCH',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
@@ -233,6 +239,10 @@ export class UsersController {
     schema: {
       example: {
         status: true,
+        statusCode: 200,
+        path: '/users/delete-multiple',
+        method: 'DELETE',
+        timestamp: new Date().toISOString(),
         message: '2 users removed successfully',
         count: 2,
       },
@@ -263,6 +273,7 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/550e8400-e29b-41d4-a716-446655440000',
+        method: 'DELETE',
         timestamp: new Date().toISOString(),
         message: 'User removed successfully',
         result: {
@@ -282,6 +293,7 @@ export class UsersController {
         status: false,
         statusCode: 404,
         path: '/users/550e8400-e29b-41d4-a716-446655440000',
+        method: 'DELETE',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
