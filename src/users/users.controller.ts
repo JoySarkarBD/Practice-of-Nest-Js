@@ -43,6 +43,7 @@ export class UsersController {
         status: true,
         statusCode: 201,
         path: '/users/create-user',
+        method: 'POST',
         timestamp: new Date().toISOString(),
         message: 'User created successfully',
         result: {
@@ -73,6 +74,7 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/get-all-users',
+        method: 'GET',
         timestamp: new Date().toISOString(),
         message: 'Users retrieved successfully',
         result: [
@@ -117,6 +119,7 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/1',
+        method: 'GET',
         timestamp: new Date().toISOString(),
         message: 'User retrieved successfully',
         result: {
@@ -136,6 +139,7 @@ export class UsersController {
         status: false,
         statusCode: 404,
         path: '/users/1',
+        method: 'GET',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
@@ -177,6 +181,8 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/1',
+        method: 'PATCH',
+
         timestamp: new Date().toISOString(),
         message: 'User updated successfully',
         result: {
@@ -196,6 +202,8 @@ export class UsersController {
         status: false,
         statusCode: 404,
         path: '/users/1',
+        method: 'PATCH',
+
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
@@ -230,6 +238,10 @@ export class UsersController {
     schema: {
       example: {
         status: true,
+        statusCode: 200,
+        path: '/delete-multiple',
+        method: 'DELETE',
+        timestamp: new Date().toISOString(),
         message: '2 users removed successfully',
         count: 2,
       },
@@ -260,6 +272,7 @@ export class UsersController {
         status: true,
         statusCode: 200,
         path: '/users/1',
+        method: 'DELETE',
         timestamp: new Date().toISOString(),
         message: 'User removed successfully',
         result: {
@@ -279,6 +292,7 @@ export class UsersController {
         status: false,
         statusCode: 404,
         path: '/users/1',
+        method: 'DELETE',
         timestamp: new Date().toISOString(),
         message: 'User not found',
       },
