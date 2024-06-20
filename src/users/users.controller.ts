@@ -48,6 +48,8 @@ export class UsersController {
         message: 'User created successfully',
         result: {
           id: 1,
+          firstName: 'John',
+          lastName: 'Doe',
           username: 'john_doe',
           email: 'john.doe@example.com',
           password: 'hashedpassword',
@@ -80,12 +82,16 @@ export class UsersController {
         result: [
           {
             id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
             username: 'john_doe',
             email: 'john.doe@example.com',
             password: 'hashedpassword',
           },
           {
             id: 2,
+            firstName: 'Jane',
+            lastName: 'Doe',
             username: 'jane_doe',
             email: 'jane.doe@example.com',
             password: 'hashedpassword',
@@ -124,6 +130,8 @@ export class UsersController {
         message: 'User retrieved successfully',
         result: {
           id: 1,
+          firstName: 'John',
+          lastName: 'Doe',
           username: 'john_doe',
           email: 'john.doe@example.com',
           password: 'hashedpassword',
@@ -187,6 +195,8 @@ export class UsersController {
         message: 'User updated successfully',
         result: {
           id: 1,
+          firstName: 'new_firstName',
+          lastName: 'new_lastName',
           username: 'new_username',
           email: 'new.email@example.com',
           password: 'newhashedpassword',
@@ -277,6 +287,8 @@ export class UsersController {
         message: 'User removed successfully',
         result: {
           id: 1,
+          firstName: 'John',
+          lastName: 'Doe',
           username: 'john_doe',
           email: 'john.doe@example.com',
           password: 'hashedpassword',

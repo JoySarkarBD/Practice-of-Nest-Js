@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './schemas/user.schema';
+import { Users } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectRepository(Users)
+    private readonly userRepository: Repository<Users>,
+  ) {}
 
   /**
    * Create a new user.
@@ -16,10 +19,9 @@ export class UsersService {
    */
   async create(
     createUserDto: CreateUserDto,
-  ): Promise<{ status: boolean; message: string; data: User }> {
-    const createdUser = new this.userModel(createUserDto);
-    const savedUser = await createdUser.save();
-
+  ): Promise<{ status: boolean; message: string; data: Users }> {
+    const newUser = this.userRepository.create(createUserDto);
+    const savedUser = await this.userRepository.save(newUser);
     return {
       status: true,
       message: 'User created successfully',
@@ -31,8 +33,12 @@ export class UsersService {
    * Retrieve all users.
    * @returns An object containing status, message, and an array of all users.
    */
-  async findAll(): Promise<{ status: boolean; message: string; data: User[] }> {
-    const data = await this.userModel.find().exec();
+  async findAll(): Promise<{
+    status: boolean;
+    message: string;
+    data: Users[];
+  }> {
+    const data = await this.userRepository.find();
     const message =
       data.length > 0 ? 'Users retrieved successfully' : 'No users found';
     return { status: true, message, data };
@@ -45,16 +51,18 @@ export class UsersService {
    */
   async findOne(
     id: string,
-  ): Promise<{ status: boolean; message: string; data: User | null }> {
-    const user = await this.userModel.findById(id).exec();
+  ): Promise<{ status: boolean; message: string; data: Users | null }> {
+    const user = await this.userRepository.findOneById(id);
+
     if (!user) {
-      return {
-        status: false,
-        message: `User with ID ${id} not found`,
-        data: null,
-      };
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
-    return { status: true, message: 'User retrieved successfully', data: user };
+
+    return {
+      status: true,
+      message: 'User retrieved successfully',
+      data: user,
+    };
   }
 
   /**
@@ -66,17 +74,19 @@ export class UsersService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<{ status: boolean; message: string; data: User | null }> {
-    const updatedUser = await this.userModel
-      .findByIdAndUpdate(id, updateUserDto, { new: true })
-      .exec();
-    if (!updatedUser) {
+  ): Promise<{ status: boolean; message: string; data: Users | null }> {
+    const user = await this.userRepository.findOneById(id);
+    if (!user) {
       return {
         status: false,
         message: `User with ID ${id} not found`,
         data: null,
       };
     }
+    const updatedUser = await this.userRepository.save({
+      ...user,
+      ...updateUserDto,
+    });
     return {
       status: true,
       message: 'User updated successfully',
@@ -91,19 +101,23 @@ export class UsersService {
    */
   async remove(
     id: string,
-  ): Promise<{ status: boolean; message: string; data: User | null }> {
-    const removedUser = await this.userModel.findByIdAndDelete(id).exec();
-    if (!removedUser) {
+  ): Promise<{ status: boolean; message: string; data: Users | null }> {
+    const user = await this.userRepository.findOneById(id);
+
+    if (!user) {
       return {
         status: false,
         message: `User with ID ${id} not found`,
         data: null,
       };
     }
+
+    await this.userRepository.remove(user);
+
     return {
       status: true,
       message: 'User removed successfully',
-      data: removedUser,
+      data: user,
     };
   }
 
@@ -115,11 +129,12 @@ export class UsersService {
   async removeMultiple(
     ids: string[],
   ): Promise<{ status: boolean; message: string; count: number }> {
-    const result = await this.userModel.deleteMany({ _id: { $in: ids } });
+    const result = await this.userRepository.delete(ids);
+
     return {
       status: true,
-      message: `${result.deletedCount} users removed successfully`,
-      count: result.deletedCount,
+      message: `${result.affected} users removed successfully`,
+      count: result.affected,
     };
   }
 }
