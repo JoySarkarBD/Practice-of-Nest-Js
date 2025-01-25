@@ -12,101 +12,103 @@ import { catchError, map } from 'rxjs/operators';
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
   /**
-   * Intercepts the response and processes it through the response handler and error handler.
+   * Intercepts the request/response flow and processes the response or handles errors.
    * @param context - The execution context of the request.
-   * @param next - The next call handler in the chain.
-   * @returns The processed response or error.
+   * @param next - The next handler in the pipeline.
+   * @returns An Observable with the formatted response or error.
    */
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
-      map((res: any) => this.responseHandler(res, context)),
-      catchError((err: HttpException) =>
-        throwError(() => this.errorHandler(err, context)),
-      ),
+      // Format the response before sending it to the client.
+      map((res) => this.formatResponse(res, context)),
+      // Handle errors and format them before sending to the client.
+      catchError((err) => {
+        this.handleError(err, context);
+        return throwError(() => err);
+      }),
     );
   }
 
   /**
-   * Handles any errors that occur during the request processing.
-   * @param exception - The exception that was thrown.
+   * Handles and formats errors consistently.
+   * @param exception - The thrown HttpException or other error.
    * @param context - The execution context of the request.
-   * @returns A formatted error response.
    */
-  errorHandler(exception: HttpException, context: ExecutionContext) {
-    const ctx = context.switchToHttp();
-    const response = ctx.getResponse();
-    const request = ctx.getRequest();
+  private handleError(
+    exception: HttpException | any,
+    context: ExecutionContext,
+  ) {
+    const { method, url } = context.switchToHttp().getRequest(); // Extract method and URL from the request.
+    const response = context.switchToHttp().getResponse(); // Get the Response object from the context.
 
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const errorResponse = exception.getResponse();
-    const formattedErrors = {};
+    const errorResponse = exception.getResponse
+      ? exception.getResponse()
+      : { message: 'An unexpected error occurred' };
 
-    // Check if the errorResponse is an object and has a message property
-    if (typeof errorResponse === 'object' && errorResponse['message']) {
-      const messages = errorResponse['message'];
-
-      // Iterate through each message and format it accordingly
-      if (Array.isArray(messages)) {
-        messages.forEach((msg: any) => {
-          if (msg.property && msg.constraints) {
-            const property = msg.property;
-            if (!formattedErrors[property]) {
-              formattedErrors[property] = [];
-            }
-            formattedErrors[property].push(...Object.values(msg.constraints));
+    const formattedErrors = Array.isArray(errorResponse?.['message'])
+      ? errorResponse['message'].reduce((acc, { property, constraints }) => {
+          if (property && constraints) {
+            acc[property] = [
+              ...(acc[property] || []),
+              ...Object.values(constraints),
+            ];
           }
-        });
-      }
-    }
+          return acc;
+        }, {})
+      : errorResponse?.['message'] || errorResponse;
 
     response.status(status).json({
       status: false,
       statusCode: status,
-      path: request.url,
+      path: url,
+      method,
       timestamp: new Date().toISOString(),
       message: formattedErrors,
     });
   }
 
   /**
-   * Handles the response before sending it to the client.
-   * @param res - The response object.
+   * Formats successful responses consistently.
+   * @param res - The original response object.
    * @param context - The execution context of the request.
-   * @returns A formatted response.
+   * @returns A formatted response object.
    */
-  responseHandler(res: any, context: ExecutionContext) {
-    const ctx = context.switchToHttp();
-    const response = ctx.getResponse();
-    const request = ctx.getRequest();
+  private formatResponse(res: any, context: ExecutionContext) {
+    const { method, url } = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
 
-    const statusCode = response.statusCode;
-
-    const status = res.status !== undefined ? res.status : true;
-    const message =
-      res.message || (status ? 'Operation successful' : 'Operation failed');
-    const data = res.data !== undefined ? res.data : res;
-
-    // If the response data is null or falsy, return an error response
-    if (data === null || !data) {
-      return {
-        status: status,
-        statusCode: statusCode,
-        path: request.url,
+    // If the response indicates a failure, return error format without result
+    if (res?.status === false) {
+      response.status(res.statusCode || 400).json({
+        status: false,
+        statusCode: res.statusCode || 400,
+        path: url,
+        method,
         timestamp: new Date().toISOString(),
-        message: message,
-      };
+        message: res.message,
+      });
+      return;
     }
-    return {
-      status: status,
-      statusCode: statusCode,
-      path: request.url,
+
+    const statusCode = res?.statusCode ?? response.statusCode;
+    const status = res?.status ?? true;
+    const message =
+      res?.message || (status ? 'Operation successful' : 'Operation failed');
+    const result = res?.data ?? res;
+
+    response.status(statusCode).json({
+      status,
+      statusCode,
+      path: url,
+      method,
       timestamp: new Date().toISOString(),
-      message: message,
-      result: data,
-    };
+      message,
+      ...(res?.data && { data: result }),
+    });
   }
 }
